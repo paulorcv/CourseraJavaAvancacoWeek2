@@ -5,8 +5,13 @@
  */
 package controle;
 
+import dominio.Tradutor;
+import dominio.TradutorTXT;
+import excecoes.TradutorException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -26,7 +31,16 @@ public class TradutorServlet extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
    
             String palavra = request.getParameter("palavra");
-            String palavraTraduzida = "retorno tradução";
+            Tradutor tradutor = new TradutorTXT();
+            
+            
+            String palavraTraduzida = "";
+            try {
+                palavraTraduzida = tradutor.traduzirPalavra(palavra);
+            } catch (TradutorException ex) {
+                Logger.getLogger(TradutorServlet.class.getName()).log(Level.SEVERE, null, ex);
+                palavraTraduzida = "----";
+            }
             
             request.setAttribute("palavraTraduzida", palavraTraduzida);
             request.getRequestDispatcher("resultado.jsp").forward(request, response);
